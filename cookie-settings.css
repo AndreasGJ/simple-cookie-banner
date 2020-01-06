@@ -126,6 +126,34 @@
     justify-content: flex-start;
     margin-right: 30px;
 }
+.cookie-settings-corner {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+.cookie-settings-corner:after {
+    content: "";
+    display: block;
+    width: 150%;
+    height: 150%;
+    background: #999;
+    position: absolute;
+    left: -50%;
+    top: -50%;
+    z-index: -1;
+    border-radius: 5px 0 0 0;
+}
+.cookie-settings-corner:hover:after {
+    background: #777;
+}
+.cookie-settings-corner svg {
+    width: 80%;
+    height: 80%;
+}
 @media (max-width: 767px) {
     .cookie-settings__actions-inner {
         flex-direction: column;

@@ -1,3 +1,5 @@
+const cookieIcon = require("./cookieIcon.js");
+
 const defaultParams = {
     structure: {
         appId: "cookie-settings",
@@ -9,7 +11,8 @@ const defaultParams = {
             "We use cookies to personalize our content and ads, to show you social media features and to analyze our traffic. We also share information about your use of our website with our social media, advertising and analytics partners. Our partners may combine this data with other information that you have provided to them or that they have collected from your use of their services.",
         submit: "Ok",
         showDetail: "Show details",
-        closeDetail: "Close details"
+        closeDetail: "Close details",
+        corner: cookieIcon
     },
     points: [
         {
@@ -110,6 +113,11 @@ const appEventSetup = (app, settings = {}) => {
             if (settings.events.onSubmit) {
                 settings.events.onSubmit(selectedPoints);
             }
+            setTimeout(() => {
+                app.parentNode.removeChild(app);
+            }, 500);
+
+            loadCorner(settings);
         });
     }
 
@@ -138,12 +146,26 @@ const appEventSetup = (app, settings = {}) => {
         }
     }
 };
+const hasPointSelected = (cookieName, point) => {
+    let cookiePoints = getCookie(cookieName);
 
+    return (
+        (!cookiePoints && point.value) ||
+        (cookiePoints && cookiePoints.indexOf(point.key) >= 0)
+    );
+};
 const loadApp = (settings = {}) => {
     const app = document.createElement("div");
-    const { structure = {}, content = {} } = settings;
+    const { structure = {}, content = {}, cookieName } = settings;
     app.id = structure.appId;
     app.className = "cookie-settings";
+
+    // Set the current points
+    settings.points = settings.points.map(point => {
+        return Object.assign({}, point, {
+            value: hasPointSelected(cookieName, point)
+        });
+    });
 
     const pointHTML = settings.points
         .map(point => {
@@ -216,6 +238,20 @@ const loadApp = (settings = {}) => {
         app.classList.add("loaded");
     }, settings.delay);
 };
+const loadCorner = (settings = {}) => {
+    const corner = document.createElement("div");
+    corner.className = "cookie-settings-corner";
+    corner.innerHTML = settings.content.corner;
+
+    document.body.appendChild(corner);
+
+    corner.addEventListener("click", event => {
+        event.preventDefault();
+
+        corner.parentNode.removeChild(corner);
+        loadApp(settings);
+    });
+};
 
 const initiate = (params = {}) => {
     const settings = {
@@ -235,6 +271,8 @@ const initiate = (params = {}) => {
     const hasCookie = getCookie(cookieName);
     if (!hasCookie) {
         loadApp(settings);
+    } else {
+        loadCorner(settings);
     }
 };
 
