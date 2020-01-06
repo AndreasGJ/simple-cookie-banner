@@ -1,0 +1,23 @@
+{
+    "name": "simple-cookie-banner",
+    "version": "1.0.0",
+    "description": "A simple cookie banner which can be loaded in any frontend framework",
+    "main": "index.js",
+    "scripts": {},
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/AndreasGJ/simple-cookie-banner.git"
+    },
+    "keywords": [
+        "cookie",
+        "banner",
+        "gpdr",
+        "cookies"
+    ],
+    "author": "Andreas Gade Jensen",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/AndreasGJ/simple-cookie-banner/issues"
+    },
+    "homepage": "https://github.com/AndreasGJ/simple-cookie-banner#readme"
+}
