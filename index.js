@@ -1,5 +1,3 @@
-require("./CookieSettings.css");
-
 const defaultParams = {
     structure: {
         appId: "cookie-settings",
