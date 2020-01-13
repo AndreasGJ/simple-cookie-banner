@@ -60,6 +60,18 @@ const getCookie = cname => {
     return "";
 };
 
+const saveCookiePoints = (points = [], selectedKeys = null) => {
+    const selectedPoints =
+        selectedKeys && typeof selectedKeys === "object"
+            ? points.filter(point => selectedKeys.indexOf(point.key) >= 0)
+            : points.filter(point => point.value);
+    const cookieValue =
+        "|" + selectedPoints.map(point => point.key).join("|") + "|";
+    setCookie(cookieName, cookieValue, cookieDays);
+
+    return selectedPoints;
+};
+
 const activatePointSidebar = (element, app) => {
     // Activate point sidebar menu item.
     const hasActivePoint = app.querySelector(".point-sidebar li.active");
@@ -80,7 +92,12 @@ const activatePointSidebar = (element, app) => {
 };
 
 const appEventSetup = (app, settings = {}) => {
-    const { points = [], cookieName, cookieDays } = settings;
+    const {
+        points = [],
+        cookieName,
+        cookieDays,
+        events: { onChecked, onSubmit, onDetailToggle, onDetailItem } = {}
+    } = settings;
     const pointInputs = app.querySelectorAll('input[type="checkbox"]');
     for (let i = 0; i < pointInputs.length; i++) {
         pointInputs[i].addEventListener("change", event => {
@@ -95,6 +112,11 @@ const appEventSetup = (app, settings = {}) => {
                 } else {
                     li.classList.remove("checked");
                 }
+
+                // On checked point
+                if (onChecked) {
+                    onChecked(points[i], checked);
+                }
             }
         });
     }
@@ -105,14 +127,15 @@ const appEventSetup = (app, settings = {}) => {
     if (submitBtn) {
         submitBtn.addEventListener("click", event => {
             event.preventDefault();
-            const selectedPoints = points.filter(point => point.value);
-            const cookieValue =
-                "|" + selectedPoints.map(point => point.key).join("|") + "|";
-            setCookie(cookieName, cookieValue, cookieDays);
+            const selectedPoints = saveCookiePoints(points);
+
             app.classList.remove("loaded");
-            if (settings.events.onSubmit) {
-                settings.events.onSubmit(selectedPoints);
+
+            // On submit
+            if (onSubmit) {
+                onSubmit(selectedPoints);
             }
+
             setTimeout(() => {
                 app.parentNode.removeChild(app);
             }, 500);
@@ -130,6 +153,11 @@ const appEventSetup = (app, settings = {}) => {
                 event.preventDefault();
 
                 app.classList.toggle("open");
+
+                // On detail open/close
+                if (onDetailToggle) {
+                    onDetailToggle(app.classList.contains("open"));
+                }
             });
         }
     }
@@ -142,6 +170,11 @@ const appEventSetup = (app, settings = {}) => {
             }
             pointsSidebar[i].addEventListener("click", event => {
                 activatePointSidebar(event.currentTarget, app);
+
+                // On detail item.
+                if (onDetailItem) {
+                    onDetailItem(i);
+                }
             });
         }
     }
@@ -156,7 +189,12 @@ const hasPointSelected = (cookieName, point) => {
 };
 const loadApp = (settings = {}) => {
     const app = document.createElement("div");
-    const { structure = {}, content = {}, cookieName } = settings;
+    const {
+        structure = {},
+        content = {},
+        events = { appLoad },
+        cookieName
+    } = settings;
     app.id = structure.appId;
     app.className = "cookie-settings";
 
@@ -236,9 +274,14 @@ const loadApp = (settings = {}) => {
 
     setTimeout(() => {
         app.classList.add("loaded");
+
+        if (appLoad) {
+            appLoad();
+        }
     }, settings.delay);
 };
 const loadCorner = (settings = {}) => {
+    const { events: { onCornerClicked, onCornerLoad } = {} } = settings;
     const corner = document.createElement("div");
     corner.className = "cookie-settings-corner";
     corner.innerHTML = settings.content.corner;
@@ -250,7 +293,17 @@ const loadCorner = (settings = {}) => {
 
         corner.parentNode.removeChild(corner);
         loadApp(settings);
+
+        // On corner clicked.
+        if (onCornerClicked) {
+            onCornerClicked();
+        }
     });
+
+    // On corner loaded.
+    if (onCornerLoad) {
+        onCornerLoad();
+    }
 };
 
 const initiate = (params = {}) => {
@@ -266,7 +319,7 @@ const initiate = (params = {}) => {
             ...(params.content || {})
         }
     };
-    const { cookieName } = settings;
+    const { cookieName, points = [] } = settings;
 
     const hasCookie = getCookie(cookieName);
     if (!hasCookie) {
@@ -274,6 +327,26 @@ const initiate = (params = {}) => {
     } else {
         loadCorner(settings);
     }
+
+    return {
+        // Save the new settings.
+        saveSettings: (selectedPoints = []) => {
+            return saveCookiePoints(points, selectedPoints);
+        },
+
+        // Save specific setting
+        saveSetting: (pointKey, isChecked = false) => {
+            const selectedKeys = points.filter(point => point.key);
+            const hasPoint = selectedKeys.indexOf(pointKey);
+            if (isChecked && hasPoint === -1) {
+                selectedKeys.push(pointKey);
+            } else if (!isChecked && hasPoint >= 0) {
+                selectedKeys.splice(hasPoint, 1);
+            }
+
+            return saveCookiePoints(points, selectedKeys);
+        }
+    };
 };
 
 module.exports = initiate;
