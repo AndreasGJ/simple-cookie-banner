@@ -10,8 +10,11 @@ const defaultParams = {
         description:
             "We use cookies to personalize our content and ads, to show you social media features and to analyze our traffic. We also share information about your use of our website with our social media, advertising and analytics partners. Our partners may combine this data with other information that you have provided to them or that they have collected from your use of their services.",
         submit: "Ok",
+        decline: "No thanks",
         showDetail: "Show details",
         closeDetail: "Close details",
+        readmoreAboutPolicy: "Read more about our cookie policy here:",
+        readmoreAboutPolicyText: "Cookie policy",
         corner: cookieIcon
     },
     points: [
@@ -31,6 +34,9 @@ const defaultParams = {
     events: {
         onSubmit: null
     },
+    type: "basic",
+    policyLink: "/",
+    useCorner: true,
     delay: 300,
     cookieDays: 365,
     cookieName: "cookie-settings"
@@ -60,7 +66,11 @@ const getCookie = cname => {
     return "";
 };
 
-const saveCookiePoints = (points = [], selectedKeys = null) => {
+const saveCookiePoints = (
+    points = [],
+    selectedKeys = null,
+    { cookieDays, cookieName }
+) => {
     const selectedPoints =
         selectedKeys && typeof selectedKeys === "object"
             ? points.filter(point => selectedKeys.indexOf(point.key) >= 0)
@@ -121,19 +131,45 @@ const appEventSetup = (app, settings = {}) => {
         });
     }
 
+    // Submit button
     const submitBtn = app.querySelector(
         '.cookie-settings__submit[type="button"]'
     );
     if (submitBtn) {
         submitBtn.addEventListener("click", event => {
             event.preventDefault();
-            const selectedPoints = saveCookiePoints(points);
+            const selectedPoints = saveCookiePoints(points, null, settings);
 
             app.classList.remove("loaded");
 
             // On submit
             if (onSubmit) {
                 onSubmit(selectedPoints);
+            }
+
+            setTimeout(() => {
+                app.parentNode.removeChild(app);
+            }, 500);
+
+            loadCorner(settings);
+        });
+    }
+
+    // Decline button
+    const declineBtn = app.querySelector(
+        '.cookie-settings__decline[type="button"]'
+    );
+    if (declineBtn) {
+        declineBtn.addEventListener("click", event => {
+            event.preventDefault();
+
+            saveCookiePoints([], null, settings);
+
+            app.classList.remove("loaded");
+
+            // On submit
+            if (onSubmit) {
+                onSubmit([]);
             }
 
             setTimeout(() => {
@@ -192,9 +228,11 @@ const loadApp = (settings = {}) => {
     const {
         structure = {},
         content = {},
-        events = { appLoad },
+        events = {},
+        type,
         cookieName
     } = settings;
+    const { appLoad } = events;
     app.id = structure.appId;
     app.className = "cookie-settings";
 
@@ -241,30 +279,52 @@ const loadApp = (settings = {}) => {
         <div class="cookie-settings__title">${content.title}</div>
         <div class="cookie-settings__description">${content.description}</div>
         <div class="cookie-settings__actions">
-            <div class="cookie-settings__actions-wrapper">
+            ${
+                type === "simple"
+                    ? `<div class="cookie-settings__actions-wrapper">
                 <div class="cookie-settings__actions-inner">
                     ${pointHTML}
                 </div>
                 <button class="cookie-settings__action-details cookie-settings__action-details__open" type="button">${content.showDetail}</button>
                 <button class="cookie-settings__action-details cookie-settings__action-details__close" type="button">${content.closeDetail}</button>
+            </div>`
+                    : ""
+            }
+            <div class="cookie-settings__actions-btns">
+                <button class="cookie-settings__submit" type="button">
+                    ${content.submit}
+                </button>
+                <button class="cookie-settings__decline" type="button">
+                    ${content.decline}
+                </button>
             </div>
-            <button class="cookie-settings__submit" type="button">
-                ${content.submit}
-            </button>
         </div>
-        <div class="cookie-settings__details-wrapper">
-            <div class="cookie-settings__details-inner">
-                <div class="cookie-settings__details-sidebar">
-                    <ul class="point-sidebar">
-                        ${pointSidebar}
-                    </ul>
-                </div>
-                <div class="cookie-settings__details-content">
-                    <div class="point-contents">
-                        ${pointDetailContents}
+        ${
+            type === "simple"
+                ? `<div class="cookie-settings__details-wrapper">
+                <div class="cookie-settings__details-inner">
+                    <div class="cookie-settings__details-sidebar">
+                        <ul class="point-sidebar">
+                            ${pointSidebar}
+                        </ul>
+                    </div>
+                    <div class="cookie-settings__details-content">
+                        <div class="point-contents">
+                            ${pointDetailContents}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div>`
+                : ``
+        }
+
+        <div class="cookie-settings__readmore-policy">
+            <p class="readmore-policy-description">${
+                content.readmoreAboutPolicy
+            }</p>
+            <a href="${settings.policyLink}" target="_blank" title="${
+        content.readmoreAboutPolicyText
+    }">${content.readmoreAboutPolicyText}</a>
         </div>
     </div>`;
 
@@ -281,24 +341,29 @@ const loadApp = (settings = {}) => {
     }, settings.delay);
 };
 const loadCorner = (settings = {}) => {
-    const { events: { onCornerClicked, onCornerLoad } = {} } = settings;
-    const corner = document.createElement("div");
-    corner.className = "cookie-settings-corner";
-    corner.innerHTML = settings.content.corner;
+    const {
+        useCorner = false,
+        events: { onCornerClicked, onCornerLoad } = {}
+    } = settings;
+    if (useCorner) {
+        const corner = document.createElement("div");
+        corner.className = "cookie-settings-corner";
+        corner.innerHTML = settings.content.corner;
 
-    document.body.appendChild(corner);
+        document.body.appendChild(corner);
 
-    corner.addEventListener("click", event => {
-        event.preventDefault();
+        corner.addEventListener("click", event => {
+            event.preventDefault();
 
-        corner.parentNode.removeChild(corner);
-        loadApp(settings);
+            corner.parentNode.removeChild(corner);
+            loadApp(settings);
 
-        // On corner clicked.
-        if (onCornerClicked) {
-            onCornerClicked();
-        }
-    });
+            // On corner clicked.
+            if (onCornerClicked) {
+                onCornerClicked();
+            }
+        });
+    }
 
     // On corner loaded.
     if (onCornerLoad) {
@@ -331,7 +396,7 @@ const initiate = (params = {}) => {
     return {
         // Save the new settings.
         saveSettings: (selectedPoints = []) => {
-            return saveCookiePoints(points, selectedPoints);
+            return saveCookiePoints(points, selectedPoints, settings);
         },
 
         // Save specific setting
@@ -344,7 +409,7 @@ const initiate = (params = {}) => {
                 selectedKeys.splice(hasPoint, 1);
             }
 
-            return saveCookiePoints(points, selectedKeys);
+            return saveCookiePoints(points, selectedKeys, settings);
         }
     };
 };

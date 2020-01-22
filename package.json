@@ -4,7 +4,7 @@
     "description": "A simple cookie banner which can be loaded in any frontend framework",
     "main": "index.js",
     "scripts": {
-        "build": "webpack"
+        "build": "webpack --mode=production"
     },
     "repository": {
         "type": "git",
