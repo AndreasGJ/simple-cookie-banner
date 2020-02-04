@@ -35,8 +35,8 @@ const defaultParams = {
         onSubmit: null
     },
     type: "basic",
-    policyLink: "/",
-    useCorner: true,
+    policyLink: false,
+    useCorner: false,
     delay: 300,
     cookieDays: 365,
     cookieName: "cookie-settings"
@@ -69,14 +69,17 @@ const getCookie = cname => {
 const saveCookiePoints = (
     points = [],
     selectedKeys = null,
-    { cookieDays, cookieName }
+    { type = "basic", cookieDays, cookieName }
 ) => {
     const selectedPoints =
         selectedKeys && typeof selectedKeys === "object"
             ? points.filter(point => selectedKeys.indexOf(point.key) >= 0)
             : points.filter(point => point.value);
-    const cookieValue =
+    let cookieValue =
         "|" + selectedPoints.map(point => point.key).join("|") + "|";
+    if (type === "basic") {
+        cookieValue = points.length > 0 ? "true" : "false";
+    }
     setCookie(cookieName, cookieValue, cookieDays);
 
     return selectedPoints;
@@ -204,7 +207,7 @@ const appEventSetup = (app, settings = {}) => {
             if (i === 0) {
                 activatePointSidebar(pointsSidebar[i], app);
             }
-            pointsSidebar[i].addEventListener("click", event => {
+            pointsSidebar[i].addEventListener("click", function(event) {
                 activatePointSidebar(event.currentTarget, app);
 
                 // On detail item.
@@ -215,7 +218,7 @@ const appEventSetup = (app, settings = {}) => {
         }
     }
 };
-const hasPointSelected = (cookieName, point) => {
+const hasPointSelected = function(cookieName, point) {
     let cookiePoints = getCookie(cookieName);
 
     return (
@@ -223,7 +226,7 @@ const hasPointSelected = (cookieName, point) => {
         (cookiePoints && cookiePoints.indexOf(point.key) >= 0)
     );
 };
-const loadApp = (settings = {}) => {
+const loadApp = function(settings = {}) {
     const app = document.createElement("div");
     const {
         structure = {},
@@ -237,14 +240,14 @@ const loadApp = (settings = {}) => {
     app.className = "cookie-settings";
 
     // Set the current points
-    settings.points = settings.points.map(point => {
+    settings.points = settings.points.map(function(point) {
         return Object.assign({}, point, {
             value: hasPointSelected(cookieName, point)
         });
     });
 
     const pointHTML = settings.points
-        .map(point => {
+        .map(function(point) {
             return `<div class="cookie-settings__action-item">
             <label class="cookie-settings__action-item__label">
                 <input class="cookie-settings__action-item__input" type="checkbox" value="${
@@ -258,7 +261,7 @@ const loadApp = (settings = {}) => {
         })
         .join("");
     const pointSidebar = settings.points
-        .map((point, index) => {
+        .map(function(point, index) {
             return `<li class="point-sidebar__item${
                 point.value ? " checked" : ""
             }" data-target=".point-content--${index}">
@@ -267,7 +270,7 @@ const loadApp = (settings = {}) => {
         })
         .join("");
     const pointDetailContents = settings.points
-        .map((point, index) => {
+        .map(function(point, index) {
             return `<div class="point-content point-content--${index}">
             <div class="point-content__title">${point.label}</div>
             <div class="point-content__text">${point.content}</div>
@@ -318,21 +321,21 @@ const loadApp = (settings = {}) => {
                 : ``
         }
 
-        <div class="cookie-settings__readmore-policy">
-            <p class="readmore-policy-description">${
-                content.readmoreAboutPolicy
-            }</p>
-            <a href="${settings.policyLink}" target="_blank" title="${
-        content.readmoreAboutPolicyText
-    }">${content.readmoreAboutPolicyText}</a>
-        </div>
+        ${
+            settings.policyLink
+                ? `<div class="cookie-settings__readmore-policy">
+            <p class="readmore-policy-description">${content.readmoreAboutPolicy}</p>
+            <a href="${settings.policyLink}" target="_blank" title="${content.readmoreAboutPolicyText}">${content.readmoreAboutPolicyText}</a>
+        </div>`
+                : ""
+        }
     </div>`;
 
     document.body.appendChild(app);
 
     appEventSetup(app, settings);
 
-    setTimeout(() => {
+    setTimeout(function() {
         app.classList.add("loaded");
 
         if (appLoad) {
@@ -340,11 +343,12 @@ const loadApp = (settings = {}) => {
         }
     }, settings.delay);
 };
-const loadCorner = (settings = {}) => {
+const loadCorner = function(settings = {}) {
     const {
         useCorner = false,
         events: { onCornerClicked, onCornerLoad } = {}
     } = settings;
+
     if (useCorner) {
         const corner = document.createElement("div");
         corner.className = "cookie-settings-corner";
@@ -352,7 +356,7 @@ const loadCorner = (settings = {}) => {
 
         document.body.appendChild(corner);
 
-        corner.addEventListener("click", event => {
+        corner.addEventListener("click", function(event) {
             event.preventDefault();
 
             corner.parentNode.removeChild(corner);
@@ -371,7 +375,7 @@ const loadCorner = (settings = {}) => {
     }
 };
 
-const initiate = (params = {}) => {
+const initiate = function(params = {}) {
     const settings = {
         ...defaultParams,
         ...params,
@@ -414,4 +418,4 @@ const initiate = (params = {}) => {
     };
 };
 
-module.exports = initiate;
+export default initiate;

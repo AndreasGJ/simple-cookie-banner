@@ -42,6 +42,7 @@ There is a number of different settings for the cookie banner. Here is a list of
 
 | Key | Description | Default |
 |---|---|---|
+| `type` | Choose *basic* if you don't want to show the points or else choose *simple* if you want to show it. | *basic*  |
 | `structure` | Object which contains namings of classNames and id's |  |
 | `structure.appId` | id of the wrapper element. | *cookie-settings* |
 | `structure.innerWrapperClass` | Classname of inner div of the wrapper. | *cookie-settings__inner* |
@@ -50,6 +51,8 @@ There is a number of different settings for the cookie banner. Here is a list of
 | `content.description` | The description right below the title in the cookie banner | *We use cookies to personalize our content and ads, to show you social media features and to analyze our traffic. We also share information about your use of our website with our social media, advertising and analytics partners. Our partners may combine this data with other information that you have provided to them or that they have collected from your use of their services.* |
 | `content.submit` | Text in submit button | *Ok* |
 | `content.showDetail` | Show button text | *Show details* |
+| `content.readmoreAboutPolicy` | Insert read more about policy text. | *Read more about our cookie policy here:* |
+| `content.readmoreAboutPolicyText` | Policy link text. | *Cookie policy* |
 | `content.closeDetail` | Close button text | *Close details* |
 | `content.corner` | SVG or HTML which renders the corner right corner for users already saved cookie settings | *SVG of cookie* |
 | `points` | Array of different cookie categories. |  |
@@ -65,9 +68,11 @@ There is a number of different settings for the cookie banner. Here is a list of
 | `events.onCornerClicked` | This function will be executed when clicking the corner button. | `null` |
 | `events.onCornerLoad` | This function will be executed when the corner button is loaded. | `null` |
 | `events.appLoad` | This function will be executed when the cookie banner is loaded. | `null` |
+| `policyLink` | Insert the link to the policy page | *false* |
 | `delay` | ms. to wait until showing the cookie banner | 300 |
 | `cookieDays`| How many days should the cookie be saved with the settings? | 365 |
 | `cookieName` | The name of the cookie banner settings cookie. | *cookie-settings* |
+| `useCorner` | If we need a way to open the modal again, then you can use the corner icon. | *false* |
 
 ## Cookie settings change
 
