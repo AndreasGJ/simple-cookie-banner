@@ -145,7 +145,7 @@ const appEventSetup = (app, settings = {}) => {
 
             // On submit
             if (onSubmit) {
-                onSubmit(selectedPoints);
+                onSubmit(settings.type === "basic" || selectedPoints);
             }
 
             closeApp(settings);
@@ -166,7 +166,7 @@ const appEventSetup = (app, settings = {}) => {
 
             // On submit
             if (onSubmit) {
-                onSubmit([]);
+                onSubmit(settings.type === "basic" ? false : []);
             }
 
             setTimeout(() => {
