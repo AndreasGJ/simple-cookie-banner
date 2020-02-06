@@ -79,7 +79,16 @@ There is a number of different settings for the cookie banner. Here is a list of
 If you want to change the settings yourself, then you can change it by using the object functions returned when initiating the `CookieSettings()` method. It will return the following functions:
 
 ```
-{
+{   
+    // Open the cookie banner
+    open: function(){},
+    
+    // Close the cookie banner
+    close: function(){},
+
+    // Get the current settings (false: not chosen yet, 1: if basic then accepted, 0: if basic then declined, array: if simple then array of the selected options)
+    getSettings: function(){},
+    
     // Save settings by selected point keys in array.
     saveSettings: function (selectedPointKeys = []),
 

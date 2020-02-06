@@ -143,18 +143,12 @@ const appEventSetup = (app, settings = {}) => {
             event.preventDefault();
             const selectedPoints = saveCookiePoints(points, null, settings);
 
-            app.classList.remove("loaded");
-
             // On submit
             if (onSubmit) {
                 onSubmit(selectedPoints);
             }
 
-            setTimeout(() => {
-                app.parentNode.removeChild(app);
-            }, 500);
-
-            loadCorner(settings);
+            closeApp(settings);
         });
     }
 
@@ -226,8 +220,20 @@ const hasPointSelected = function(cookieName, point) {
         (cookiePoints && cookiePoints.indexOf(point.key) >= 0)
     );
 };
+let app;
+const closeApp = (settings = {}) => {
+    if (app) {
+        app.classList.remove("loaded");
+
+        setTimeout(() => {
+            app.parentNode.removeChild(app);
+        }, 500);
+
+        loadCorner(settings);
+    }
+};
 const loadApp = function(settings = {}) {
-    const app = document.createElement("div");
+    app = document.createElement("div");
     const {
         structure = {},
         content = {},
@@ -391,6 +397,7 @@ const initiate = function(params = {}) {
     const { cookieName, points = [] } = settings;
 
     const hasCookie = getCookie(cookieName);
+
     if (!hasCookie) {
         loadApp(settings);
     } else {
@@ -398,11 +405,30 @@ const initiate = function(params = {}) {
     }
 
     return {
+        open: () => {
+            return loadApp(settings);
+        },
+        close: () => {
+            return closeApp(settings);
+        },
+        getSettings: () => {
+            const value = getCookie(settings.cookieName);
+
+            if (!value) return false;
+
+            if (settings.type === "basic") {
+                return value === "true" ? 1 : 0;
+            }
+            if (settings.type === "simple") {
+                return value.replace(/(^\||\|$)/g, "").split("|");
+            }
+
+            return null;
+        },
         // Save the new settings.
         saveSettings: (selectedPoints = []) => {
             return saveCookiePoints(points, selectedPoints, settings);
         },
-
         // Save specific setting
         saveSetting: (pointKey, isChecked = false) => {
             const selectedKeys = points.filter(point => point.key);
