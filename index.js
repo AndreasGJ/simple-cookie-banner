@@ -32,7 +32,8 @@ const defaultParams = {
         }
     ],
     events: {
-        onSubmit: null
+        onSubmit: null,
+        onLoad: null
     },
     type: "basic",
     policyLink: false,
@@ -241,7 +242,7 @@ const loadApp = function(settings = {}) {
         type,
         cookieName
     } = settings;
-    const { appLoad } = events;
+
     app.id = structure.appId;
     app.className = "cookie-settings";
 
@@ -343,10 +344,6 @@ const loadApp = function(settings = {}) {
 
     setTimeout(function() {
         app.classList.add("loaded");
-
-        if (appLoad) {
-            appLoad();
-        }
     }, settings.delay);
 };
 const loadCorner = function(settings = {}) {
@@ -404,6 +401,26 @@ const initiate = function(params = {}) {
         loadCorner(settings);
     }
 
+    const getSettings = () => {
+        const value = getCookie(settings.cookieName);
+
+        if (!value) return false;
+
+        if (settings.type === "basic") {
+            return value === "true" ? 1 : 0;
+        }
+        if (settings.type === "simple") {
+            return value.replace(/(^\||\|$)/g, "").split("|");
+        }
+
+        return null;
+    };
+
+    // If the onLoad function is set then execute it with the given settings.
+    if (settings.events && settings.events.onLoad) {
+        settings.events.onLoad(getSettings());
+    }
+
     return {
         open: () => {
             return loadApp(settings);
@@ -411,20 +428,7 @@ const initiate = function(params = {}) {
         close: () => {
             return closeApp(settings);
         },
-        getSettings: () => {
-            const value = getCookie(settings.cookieName);
-
-            if (!value) return false;
-
-            if (settings.type === "basic") {
-                return value === "true" ? 1 : 0;
-            }
-            if (settings.type === "simple") {
-                return value.replace(/(^\||\|$)/g, "").split("|");
-            }
-
-            return null;
-        },
+        getSettings,
         // Save the new settings.
         saveSettings: (selectedPoints = []) => {
             return saveCookiePoints(points, selectedPoints, settings);

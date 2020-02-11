@@ -67,7 +67,7 @@ There is a number of different settings for the cookie banner. Here is a list of
 | `events.onDetailItem` | This function will be executed when switching around the detail sidebar. Argument 0 is *index* of the point active. | `null` |
 | `events.onCornerClicked` | This function will be executed when clicking the corner button. | `null` |
 | `events.onCornerLoad` | This function will be executed when the corner button is loaded. | `null` |
-| `events.appLoad` | This function will be executed when the cookie banner is loaded. | `null` |
+| `events.onLoad` | This function will be executed when the cookie banner is loaded. | `null` |
 | `policyLink` | Insert the link to the policy page | *false* |
 | `delay` | ms. to wait until showing the cookie banner | 300 |
 | `cookieDays`| How many days should the cookie be saved with the settings? | 365 |
