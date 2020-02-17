@@ -234,7 +234,13 @@ const closeApp = (settings = {}) => {
     }
 };
 const loadApp = function(settings = {}) {
-    const structure = settings.structure || {};
+    const {
+        structure = {},
+        content = {},
+        events = {},
+        type,
+        cookieName
+    } = settings;
     const hasApp = document.getElementById(structure.appId);
 
     if (hasApp) {
@@ -244,14 +250,6 @@ const loadApp = function(settings = {}) {
         app.id = structure.appId;
         app.className = "cookie-settings";
     }
-
-    const {
-        structure = {},
-        content = {},
-        events = {},
-        type,
-        cookieName
-    } = settings;
 
     // Set the current points
     settings.points = settings.points.map(function(point) {
