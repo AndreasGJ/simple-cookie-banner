@@ -234,6 +234,7 @@ const closeApp = (settings = {}) => {
     }
 };
 const loadApp = function(settings = {}) {
+    const structure = settings.structure || {};
     const hasApp = document.getElementById(structure.appId);
 
     if (hasApp) {
