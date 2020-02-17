@@ -112,6 +112,7 @@ const appEventSetup = (app, settings = {}) => {
         cookieDays,
         events: { onChecked, onSubmit, onDetailToggle, onDetailItem } = {}
     } = settings;
+
     const pointInputs = app.querySelectorAll('input[type="checkbox"]');
     for (let i = 0; i < pointInputs.length; i++) {
         pointInputs[i].addEventListener("change", event => {
@@ -163,16 +164,12 @@ const appEventSetup = (app, settings = {}) => {
 
             saveCookiePoints([], null, settings);
 
-            app.classList.remove("loaded");
-
             // On submit
             if (onSubmit) {
                 onSubmit(settings.type === "basic" ? false : []);
             }
 
-            setTimeout(() => {
-                app.parentNode.removeChild(app);
-            }, 500);
+            closeApp(settings);
 
             loadCorner(settings);
         });
@@ -222,13 +219,16 @@ const hasPointSelected = function(cookieName, point) {
     );
 };
 let app;
-const closeApp = (settings = {}) => {
+const closeApp = (settings = {}, force = false) => {
     if (app) {
         app.classList.remove("loaded");
-
-        setTimeout(() => {
+        if (force) {
             app.parentNode.removeChild(app);
-        }, 500);
+        } else {
+            setTimeout(() => {
+                app.parentNode.removeChild(app);
+            }, 500);
+        }
 
         loadCorner(settings);
     }
@@ -398,13 +398,15 @@ const initiate = function(params = {}) {
             ...(params.content || {})
         }
     };
-    const { cookieName, points = [] } = settings;
+    const { structure = {}, cookieName, points = [] } = settings;
+    app = document.getElementById(structure.appId);
 
     const hasCookie = getCookie(cookieName);
 
     if (!hasCookie) {
         loadApp(settings);
     } else {
+        closeApp(settings, true);
         loadCorner(settings);
     }
 
