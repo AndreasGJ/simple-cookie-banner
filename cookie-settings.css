@@ -62,6 +62,9 @@
     margin: 0 0 16px 0;
     width: 100%;
     font-size: 16px;
+    outline: none;
+    border: 1px solid #777777;
+    box-shadow: none;
 }
 .cookie-settings__actions-wrapper {
     flex-grow: 1;

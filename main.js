@@ -248,7 +248,7 @@ const loadApp = function(settings = {}) {
     } else {
         app = document.createElement("div");
         app.id = structure.appId;
-        app.className = "cookie-settings";
+        app.className = `cookie-settings cookie-settings--${type}`;
     }
 
     // Set the current points
@@ -291,8 +291,12 @@ const loadApp = function(settings = {}) {
         .join("");
 
     app.innerHTML = `<div class="cookie-settings__inner">
-        <div class="cookie-settings__title">${content.title}</div>
-        <div class="cookie-settings__description">${content.description}</div>
+        <div class="cookie-settings__content-wrapper">
+            <div class="cookie-settings__title">${content.title}</div>
+            <div class="cookie-settings__description">${
+                content.description
+            }</div>
+        </div>
         <div class="cookie-settings__actions">
             ${
                 type === "simple"
