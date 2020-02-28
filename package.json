@@ -1,11 +1,8 @@
 {
     "name": "simple-cookie-banner",
-    "version": "1.0.17",
+    "version": "1.0.18",
     "description": "A simple cookie banner which can be loaded in any frontend framework",
     "main": "index.js",
-    "scripts": {
-        "build": "webpack --mode=production"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/AndreasGJ/simple-cookie-banner.git"
@@ -22,11 +19,6 @@
         "url": "https://github.com/AndreasGJ/simple-cookie-banner/issues"
     },
     "homepage": "https://github.com/AndreasGJ/simple-cookie-banner#readme",
-    "devDependencies": {
-        "webpack": "^4.41.5",
-        "webpack-cli": "^3.3.10"
-    },
-    "dependencies": {
-        "@babel/runtime": "^7.8.4"
-    }
+    "devDependencies": {},
+    "dependencies": {}
 }
