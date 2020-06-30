@@ -390,18 +390,14 @@ const loadCorner = function(settings = {}) {
 };
 
 const initiate = function(params = {}) {
-  const settings = {
-    ...defaultParams,
-    ...params,
-    structure: {
-      ...defaultParams.structure,
-      ...(params.structure || {})
-    },
-    content: {
-      ...defaultParams.content,
-      ...(params.content || {})
-    }
-  };
+  const settings = Object.assign({},
+    defaultParams,
+    params,
+    {
+    structure: Object.assign({},defaultParams.structure, params.structure || {}),
+    content: Object.assign({}, defaultParams.content, params.content || {}),
+  });
+
   const { structure = {}, cookieName, points = [] } = settings;
   app = document.getElementById(structure.appId);
 
