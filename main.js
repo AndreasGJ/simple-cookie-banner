@@ -309,7 +309,7 @@ const loadApp = function(settings = {}) {
 
   const pointHTML = settings.points
     .map(function(point) {
-      return `<div class="cookie-settings__action-item">
+      return `<div class="cookie-settings__action-item${point.disabled ? ' cookie-settings__action-item--disabled' : ''}${point.value ? ' cookie-settings__action-item--checked' : ''}">
             <label class="cookie-settings__action-item__label">
                 <input class="cookie-settings__action-item__input" type="checkbox" value="${
                   point.key
