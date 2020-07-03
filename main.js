@@ -177,7 +177,7 @@ const appEventSetup = (app, settings = {}) => {
     });
   }
 
-  // Decline button
+  // Accept button
   const acceptAllBtn = app.querySelector(
     '.cookie-settings__accept-all[type="button"]'
   );
@@ -201,6 +201,7 @@ const appEventSetup = (app, settings = {}) => {
     });
   }
 
+  // Decline button
   const detailBtns = app.querySelectorAll(
     '.cookie-settings__action-details[type="button"]'
   );
@@ -217,6 +218,28 @@ const appEventSetup = (app, settings = {}) => {
         }
       });
     }
+  }
+
+  // Custom button
+  const customBtn = app.querySelector(
+    '.cookie-settings__custom[type="button"]'
+  );
+  if (customBtn) {
+    customBtn.addEventListener("click", event => {
+      event.preventDefault();
+
+      const index = parseInt(event.target.getAttribute('data-id'));
+
+      const button = settings.buttons[index];
+
+      if(button && typeof button.onClick === "function"){
+        button.onClick({
+          closeApp: closeApp,
+          saveCookiePoints: saveCookiePoints,
+          settings: settings
+        });
+      }
+    });
   }
 
   const pointsSidebar = app.querySelectorAll(".point-sidebar li");
