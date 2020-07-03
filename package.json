@@ -1,6 +1,6 @@
 {
   "name": "simple-cookie-banner",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A simple cookie banner which can be loaded in any frontend framework",
   "main": "index.js",
   "repository": {
