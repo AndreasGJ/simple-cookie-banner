@@ -313,7 +313,7 @@ const loadApp = function(settings = {}) {
             <label class="cookie-settings__action-item__label">
                 <input class="cookie-settings__action-item__input" type="checkbox" value="${
                   point.key
-                }" ${point.value ? "checked" : ""} />
+                }" ${point.value ? "checked" : ""}${point.disabled ? ' disabled="disabled"' : ''} />
                 <span class="cookie-settings__action-item__text">${
                   point.label
                 }</span>
