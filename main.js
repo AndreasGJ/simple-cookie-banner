@@ -9,14 +9,16 @@ const defaultParams = {
     title: "This website uses cookies",
     description:
       "We use cookies to personalize our content and ads, to show you social media features and to analyze our traffic. We also share information about your use of our website with our social media, advertising and analytics partners. Our partners may combine this data with other information that you have provided to them or that they have collected from your use of their services.",
-    submit: "Ok",
-    decline: "No thanks",
     showDetail: "Show details",
     closeDetail: "Close details",
     readmoreAboutPolicy: "Read more about our cookie policy here:",
     readmoreAboutPolicyText: "Cookie policy",
     corner: cookieIcon
   },
+  buttons: [
+    {type: 'decline', label: 'No thanks'},
+    {type: 'submit', label: 'Ok'},
+  ],
   points: [
     {
       label: "Statistics",
@@ -175,6 +177,30 @@ const appEventSetup = (app, settings = {}) => {
     });
   }
 
+  // Decline button
+  const acceptAllBtn = app.querySelector(
+    '.cookie-settings__accept-all[type="button"]'
+  );
+  if (acceptAllBtn) {
+    acceptAllBtn.addEventListener("click", event => {
+      event.preventDefault();
+
+      const selectedPoints = settings.points.map(point => {
+        return Object.assign({}, point, {value: true});
+      });
+      saveCookiePoints(selectedPoints, null, settings);
+
+      // On submit
+      if (onSubmit) {
+        onSubmit(selectedPoints);
+      }
+
+      closeApp(settings);
+
+      loadCorner(settings);
+    });
+  }
+
   const detailBtns = app.querySelectorAll(
     '.cookie-settings__action-details[type="button"]'
   );
@@ -310,12 +336,9 @@ const loadApp = function(settings = {}) {
                 : ""
             }
             <div class="cookie-settings__actions-btns">
-                <button class="cookie-settings__submit" type="button">
-                    ${content.submit}
-                </button>
-                <button class="cookie-settings__decline" type="button">
-                    ${content.decline}
-                </button>
+                ${settings.buttons.map((button, index) => {
+                  return '<button class="cookie-settings__'+button.type+'" data-id="'+index+'" type="button">'+button.label+'</button>';
+                }).join('')}
             </div>
         </div>
         ${

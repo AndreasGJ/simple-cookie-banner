@@ -49,7 +49,6 @@ There is a number of different settings for the cookie banner. Here is a list of
 | `content.*` |  Object which contains all text related strings. |  |
 | `content.title` | Title in the cookie banner | *This website uses cookies* |
 | `content.description` | The description right below the title in the cookie banner | *We use cookies to personalize our content and ads, to show you social media features and to analyze our traffic. We also share information about your use of our website with our social media, advertising and analytics partners. Our partners may combine this data with other information that you have provided to them or that they have collected from your use of their services.* |
-| `content.submit` | Text in submit button | *Ok* |
 | `content.showDetail` | Show button text | *Show details* |
 | `content.readmoreAboutPolicy` | Insert read more about policy text. | *Read more about our cookie policy here:* |
 | `content.readmoreAboutPolicyText` | Policy link text. | *Cookie policy* |
@@ -73,6 +72,7 @@ There is a number of different settings for the cookie banner. Here is a list of
 | `cookieDays`| How many days should the cookie be saved with the settings? | 365 |
 | `cookieName` | The name of the cookie banner settings cookie. | *cookie-settings* |
 | `useCorner` | If we need a way to open the modal again, then you can use the corner icon. | *false* |
+| `buttons`| Is the array of CTA's in the banner, you can also add custom buttons. | *array* |
 
 ## Cookie settings change
 
@@ -98,3 +98,21 @@ If you want to change the settings yourself, then you can change it by using the
 ```
 
 You can use the `cookieSettings.saveSettings(selectedPointKeys)` function to update all the user cookie settings. You can also update only 1 setting with the `cookieSettings.saveSetting(pointKey, isChecked = false)`.
+
+## Cookie buttons
+
+Here is an example of how you can use the buttons array:
+
+```json
+[
+    {type: 'decline', label: 'No thanks'},
+    {type: 'submit', label: 'Ok'},
+]
+```
+
+Here is the types of buttons:
+
+- *decline* will decline all the points.
+- *submit* will accept only the selected points.
+- *accept-all* will accept all points
+- *custom* will need a new parameter `onClick` which is the function it will execute on click.
