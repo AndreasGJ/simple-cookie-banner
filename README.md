@@ -71,6 +71,7 @@ There is a number of different settings for the cookie banner. Here is a list of
 | `delay` | ms. to wait until showing the cookie banner | 300 |
 | `cookieDays`| How many days should the cookie be saved with the settings? | 365 |
 | `cookieName` | The name of the cookie banner settings cookie. | *cookie-settings* |
+| `cookieDomain` | The domain of the cookie with the settings. | *false* |
 | `useCorner` | If we need a way to open the modal again, then you can use the corner icon. | *false* |
 | `buttons`| Is the array of CTA's in the banner, you can also add custom buttons. | *array* |
 

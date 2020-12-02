@@ -29,6 +29,7 @@ if (typeof Object.assign !== 'function') {
 }
 
 const cookieIcon = require("./cookieIcon.js");
+var cookieDomain = null;
 
 const defaultParams = {
 structure: {
@@ -72,7 +73,8 @@ policyLink: false,
 useCorner: false,
 delay: 300,
 cookieDays: 365,
-cookieName: "cookie-settings"
+cookieName: "cookie-settings",
+cookieDomain: false,
 };
 const setCookie = function(cname, cvalue) {
 let expires = "";
@@ -82,7 +84,8 @@ if (exdays) {
   d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
   expires = "expires=" + d.toUTCString() + ";";
 }
-document.cookie = cname + "=" + cvalue + ";" + expires + "path=/";
+const domain = cookieDomain ? ';domain=' + cookieDomain : '';
+document.cookie = cname + "=" + cvalue + ";" + expires + "path=/" + domain;
 };
 
 const getCookie = function(cname) {
@@ -485,6 +488,7 @@ const settings = Object.assign({},
   content: Object.assign({}, defaultParams.content, params.content || {}),
 });
 
+cookieDomain = settings.cookieDomain;
 const structure = settings.structure || {};
 const cookieName = settings.cookieName;
 const points = settings.points || [];
